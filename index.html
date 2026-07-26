@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Calculators</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f9f9f9;
+  color: #111;
+  padding: 24px 16px 48px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+.live-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #eafaf3; color: #00C853; border: 1px solid #b6e8d3;
+  border-radius: 20px; font-size: 11px; font-weight: 600;
+  padding: 3px 10px; margin-left: 8px; vertical-align: middle;
+  letter-spacing: 0.04em;
+}
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #00C853; animation: pulse 1.8s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* App-level tabs */
+.app-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.app-tab {
+  flex: 1; min-width: 90px; padding: 13px 12px; border-radius: 12px; border: 2px solid #ddd;
+  background: #fff; cursor: pointer; font-size: 15px; font-weight: 600;
+  color: #555; transition: all 0.15s; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+}
+.app-tab.active { background: #0066FF; color: #fff; border-color: #0066FF; }
+.app-tab:hover:not(.active) { border-color: #999; color: #111; }
+.app-panel { display: none; }
+.app-panel.active { display: block; }
+
+/* Tabs (lotto jackpot modes) */
+.tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: nowrap; }
+.tab {
+  flex: 1 1 0; min-width: 0; padding: 10px 6px; min-height: 44px; box-sizing: border-box; border-radius: 8px; border: 1.5px solid #ddd;
+  background: #fff; cursor: pointer; font-size: clamp(11px, 3.4vw, 14px); font-weight: 500; text-align: center;
+  transition: all 0.15s; position: relative;
+}
+.tab.active { background: #0066FF; color: #fff; border-color: #0066FF; }
+.tab:hover:not(.active) { border-color: #999; }
+.tab .jackpot-pill { display: block; font-size: clamp(9px, 2.6vw, 10px); font-weight: 600; color: #00C853; margin-top: 1px; overflow-wrap: break-word; }
+.tab.active .jackpot-pill { color: #7ee8bd; }
+
+/* Sections */
+.section { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; padding: 20px 24px; margin-bottom: 16px; }
+.section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #888; margin-bottom: 16px; }
+
+/* Jackpot info card */
+.jackpot-card { display: flex; gap: 16px; margin-bottom: 16px; }
+.jackpot-stat { flex: 1; background: #f5f5f5; border-radius: 8px; padding: 12px 14px; }
+.jackpot-stat .js-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 4px; }
+.jackpot-stat .js-val { font-size: 20px; font-weight: 700; color: #111; }
+.jackpot-stat .js-sub { font-size: 11px; color: #888; margin-top: 2px; }
+.next-draw { font-size: 12px; color: #888; margin-bottom: 16px; }
+.next-draw strong { color: #111; }
+.edit-note { font-size: 12px; color: #aaa; margin-bottom: 12px; }
+
+/* Inputs */
+.input-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.input-row label { font-size: 14px; color: #555; min-width: 160px; }
+.input-wrap { position: relative; flex: 1; }
+.input-wrap span.prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #888; font-size: 14px; pointer-events: none; }
+.input-wrap span.suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #888; font-size: 14px; pointer-events: none; }
+input[type=number] {
+  width: 100%; padding: 9px 12px 9px 24px; border: 1.5px solid #ddd;
+  border-radius: 8px; font-size: 15px; font-weight: 500; outline: none;
+  transition: border-color 0.15s; background: #fff; color: #111;
+}
+input[type=number]:focus { border-color: #0066FF; }
+input[type=number].no-prefix { padding-left: 12px; }
+input[type=number].has-suffix { padding-right: 28px; }
+input[type=range] { width: 100%; accent-color: #0066FF; }
+
+/* Result rows */
+.result-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 14px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
+.result-row:last-child { border-bottom: none; }
+.result-label { color: #555; }
+.result-label .badge { display: inline-block; font-size: 11px; background: #f0f0f0; color: #666; border-radius: 4px; padding: 2px 6px; margin-left: 6px; }
+.result-val { font-weight: 600; color: #111; white-space: nowrap; margin-left: auto; text-align: right; }
+.result-val.tax { color: #e05252; }
+.result-val.keep { color: #00C853; }
+
+/* Slider row */
+.slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.slider-row label { font-size: 14px; color: #555; min-width: 120px; }
+.slider-row input[type=range] { flex: 1; }
+.slider-val { font-size: 14px; font-weight: 600; min-width: 48px; text-align: right; }
+
+/* Income grid */
+.income-grid { display: block; }
+.income-table td.ic-label { color: #555; }
+.income-table td.ic-val { font-weight: 700; color: #111; }
+.income-table .ic-delta-inline { font-size: 11px; font-weight: 500; color: #00C853; margin-top: 2px; }
+
+/* Rate table */
+.rate-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+.rate-table th { text-align: left; padding: 8px 10px; background: #f5f5f5; font-weight: 600; color: #555; font-size: 12px; letter-spacing: 0.04em; }
+.rate-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+.rate-table tr:last-child td { border-bottom: none; }
+.rate-table td:not(:first-child) { font-weight: 500; }
+
+.toggle-btn { background: none; border: 1.5px solid #ddd; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; color: #555; margin-top: 12px; transition: all 0.15s; }
+.toggle-btn:hover { border-color: #999; color: #111; }
+
+/* Income tabs */
+.income-tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 1.5px solid #e5e5e5; }
+.income-tab { flex: 1 1 0; min-width: 0; padding: 10px 4px; font-size: clamp(11px, 3vw, 13px); font-weight: 500; color: #888; cursor: pointer; border: none; background: none; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; transition: all 0.15s; white-space: normal; text-align: center; }
+.income-tab.active { color: #111; border-bottom-color: #111; }
+.income-tab:hover:not(.active) { color: #555; }
+.income-panel { display: none; padding-top: 20px; }
+.income-panel.active { display: block; }
+
+.divider { border: none; border-top: 1px solid #eee; margin: 4px 0 16px; }
+
+/* ===== Tenure-specific components ===== */
+.label-cap { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #888; margin-bottom: 8px; display: block; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg-btn {
+  flex: 1 1 90px; min-height: 44px; padding: 10px 10px; border-radius: 8px; border: 2px solid #ddd;
+  background: #fff; cursor: pointer; font-size: 14px; font-weight: 500;
+  color: #666; transition: all 0.15s; display: flex; align-items: center;
+  justify-content: center; gap: 5px; text-align: center;
+}
+.seg-btn.active { background: #00C853; border-color: #00C853; color: #fff; font-weight: 700; }
+.seg-btn:hover:not(.active) { border-color: #999; color: #111; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+.chip { min-height: 40px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid #ddd; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; color: #111; transition: all 0.15s; }
+.chip:hover { background: #00C853; border-color: #00C853; color: #fff; }
+.chip:active { transform: scale(0.95); }
+.chip-clear { min-height: 40px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid #e05252; background: #fff; cursor: pointer; font-size: 12px; font-weight: 700; color: #e05252; text-transform: uppercase; letter-spacing: 0.04em; transition: all 0.15s; }
+.chip-clear:hover { background: #e05252; color: #fff; }
+
+.total-banner { background: #0066FF; color: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; overflow-wrap: break-word; }
+.total-banner .tb-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.85); }
+.total-banner .tb-val { font-size: clamp(24px, 7vw, 34px); font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; line-height: 1.15; }
+.total-banner .tb-sub { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 4px; font-style: italic; }
+
+.solver { background: #fff; border: 2px dashed #ccc; border-radius: 12px; padding: 18px 22px; margin-bottom: 16px; }
+.solver summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #0066FF; }
+.solver summary::-webkit-details-marker { display: none; }
+.solver summary .plus { font-size: 20px; font-weight: 700; line-height: 1; color: #0066FF; transition: transform 0.15s; flex: none; }
+.solver[open] summary .plus { transform: rotate(45deg); }
+.solver[open] summary { margin-bottom: 14px; }
+.solver-grid { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
+.solver .req { font-size: clamp(18px, 5vw, 24px); font-weight: 700; color: #00C853; overflow-wrap: break-word; }
+.field-mini { display: flex; align-items: center; gap: 2px; border: 1.5px solid #ddd; border-radius: 8px; padding: 9px 10px; background: #fff; min-height: 44px; box-sizing: border-box; }
+.field-mini:focus-within { border-color: #0066FF; }
+.field-mini span { color: #888; font-size: 15px; }
+.field-mini input { border: none; outline: none; background: none; padding: 0; font-size: 15px; font-weight: 500; width: 100%; color: #111; }
+.apply-btn { min-height: 44px; padding: 11px 18px; border-radius: 8px; border: 2px solid #00C853; background: #00C853; color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: all 0.15s; }
+.apply-btn:hover { background: #00A344; border-color: #00A344; }
+.apply-btn:active { transform: scale(0.97); }
+
+.t-table-wrap { overflow-x: auto; border-radius: 10px; -webkit-overflow-scrolling: touch; }
+.t-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.t-table th { position: sticky; top: 0; background: #f5f5f5; text-align: left; padding: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: #777; font-weight: 600; white-space: nowrap; }
+.t-table th.num { text-align: right; }
+.t-table td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+.t-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.t-table td.muted { color: #999; }
+.t-table td.cum { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.t-table tbody tr:nth-child(even) td:not(:first-child) { background: #fafafa; }
+/* Freeze the first (label) column so context never scrolls out of view on a wide table */
+.t-table th:first-child, .t-table td:first-child {
+  position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 4px rgba(0,0,0,0.06);
+}
+.t-table th:first-child { background: #f5f5f5; z-index: 3; }
+.t-table td:first-child { background: #fff; }
+.t-table tbody tr:nth-child(even) td:first-child { background: #fafafa; }
+
+@media (max-width: 480px) {
+  .jackpot-card { flex-direction: column; }
+  .input-row { flex-direction: column; align-items: flex-start; }
+  .input-row label { min-width: unset; }
+  .input-wrap { width: 100%; }
+}
+
+/* Mobile: solver fields stack full-width regardless of inline widths */
+@media (max-width: 600px) {
+  .solver-grid { flex-direction: column; align-items: stretch; gap: 12px; }
+  .solver-grid .field-mini { width: 100% !important; }
+  .solver-grid .apply-btn { width: 100%; }
+}
+
+/* Mobile: keep tables as real tables, just tighten sizing so more columns are visible before scrolling */
+@media (max-width: 700px) {
+  .t-table, .rate-table { font-size: 12px; }
+  .t-table th, .t-table td, .rate-table th, .rate-table td { padding: 7px 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- App switcher -->
+<div class="app-tabs">
+  <button class="app-tab active" id="appTabTenure" onclick="setApp('tenure')">💼 Tenure</button>
+  <button class="app-tab" id="appTabBusiness" onclick="setApp('business')">📊 Business</button>
+  <button class="app-tab" id="appTabLotto" onclick="setApp('lotto')">🎰 Lotto</button>
+</div>
+
+<!-- ============ TENURE PANEL ============ -->
+<div id="app-tenure" class="app-panel active">
+  <h1>Tenure Pay Calculator</h1>
+  <p class="subtitle">Pay that grows with how long someone has been with you</p>
+
+  <div class="total-banner" style="background:#00C853">
+    <div class="tb-label" id="t-since-label">Accumulated from start date to today</div>
+    <div class="tb-val" id="t-since-val" style="font-size:28px">—</div>
+    <div class="tb-sub" id="t-since-sub"></div>
+  </div>
+
+  <div class="total-banner">
+    <div class="tb-label" id="t-total-label">Total accumulation</div>
+    <div class="tb-val" id="t-total-val">—</div>
+    <div class="tb-sub" id="t-total-sub"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Base rate (year 1)</div>
+    <div class="input-row">
+      <label>Amount</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="t-base" value="10000" step="1000" min="0" oninput="tBaseInput()">
+      </div>
+    </div>
+    <div class="chips">
+      <button class="chip" onclick="tAddBase(1000)">+$1k</button>
+      <button class="chip" onclick="tAddBase(2000)">+$2k</button>
+      <button class="chip" onclick="tAddBase(5000)">+$5k</button>
+      <button class="chip" onclick="tAddBase(10000)">+$10k</button>
+      <button class="chip" onclick="tAddBase(50000)">+$50k</button>
+      <button class="chip" onclick="tAddBase(100000)">+$100k</button>
+      <button class="chip-clear" onclick="tSetBase(0)">Clear</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Start date</div>
+    <div class="input-row" style="margin-bottom:8px">
+      <label>Start year</label>
+      <div class="input-wrap">
+        <input type="number" id="t-syear" step="1" min="1900" class="no-prefix" oninput="tStartInput()">
+      </div>
+    </div>
+    <div class="input-row" style="margin-bottom:0">
+      <label>Start month</label>
+      <div class="input-wrap">
+        <select id="t-smonth" onchange="tStartInput()"
+          style="width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:15px;font-weight:500;background:#fff;color:#111">
+          <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+          <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+          <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+        </select>
+      </div>
+    </div>
+    <p class="edit-note" id="t-since-note" style="margin:12px 0 0"></p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">How the rate grows each year</div>
+    <div class="seg" style="max-width:360px">
+      <button class="seg-btn" data-gm="multiple" onclick="tSetGrowth('multiple')">× tenure year</button>
+      <button class="seg-btn" data-gm="percent" onclick="tSetGrowth('percent')">% per year</button>
+    </div>
+    <div class="input-row" id="t-pct-row" style="margin-top:16px; margin-bottom:0">
+      <label style="font-size:13px">Growth per year</label>
+      <div class="input-wrap">
+        <input type="number" id="t-pct" value="12" step="0.5" min="0" class="no-prefix has-suffix" oninput="tPctInput()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+    <p class="edit-note" id="t-growth-note" style="margin:12px 0 0"></p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Pay frequency &amp; timeline</div>
+    <span class="label-cap">Pay frequency</span>
+    <div class="seg" style="margin-bottom:18px">
+      <button class="seg-btn" data-pf="week" onclick="tSetPeriod('week')">Week</button>
+      <button class="seg-btn" data-pf="month" onclick="tSetPeriod('month')">Month</button>
+      <button class="seg-btn" data-pf="year" onclick="tSetPeriod('year')">Year</button>
+    </div>
+    <span class="label-cap">View timeline by</span>
+    <div class="seg" style="margin-bottom:18px; max-width:280px">
+      <button class="seg-btn" data-vu="year" onclick="tSetView('year')">Years</button>
+      <button class="seg-btn" data-vu="month" onclick="tSetView('month')">Months</button>
+    </div>
+    <span class="label-cap" id="t-horizon-label">Horizon</span>
+    <input type="range" id="t-horizon" min="1" max="30" value="15" oninput="tHorizonInput()">
+  </div>
+
+  <div class="t-table-wrap">
+    <table class="t-table">
+      <thead id="t-thead"></thead>
+      <tbody id="t-tbody"></tbody>
+    </table>
+  </div>
+  <p class="edit-note" id="t-foot" style="margin-top:12px"></p>
+
+  <details class="solver" style="margin-top:16px">
+    <summary><span>Reverse it — solve the base rate from a target</span><span class="plus">+</span></summary>
+    <div class="solver-grid">
+      <div>
+        <span class="label-cap">Target total</span>
+        <div class="field-mini" style="width:180px"><span>$</span><input type="number" id="t-target" value="10000000" step="1000000" min="0" oninput="tTargetInput()"></div>
+      </div>
+      <div>
+        <span class="label-cap">By year</span>
+        <div class="field-mini" style="width:90px"><input type="number" id="t-tyear" value="14" step="1" min="1" max="30" oninput="tTyearInput()"></div>
+      </div>
+      <div style="flex:1; min-width:160px">
+        <span class="label-cap" id="t-req-label">Required base rate</span>
+        <div class="req" id="t-req">—</div>
+      </div>
+      <button class="apply-btn" onclick="tApply()">Apply as base</button>
+    </div>
+    <p class="edit-note" style="margin:14px 0 0">Uses your current pay frequency and growth model — change either and this updates automatically.</p>
+  </details>
+</div>
+
+<!-- ============ LOTTO PANEL ============ -->
+<div id="app-lotto" class="app-panel">
+  <h1>🎰 Lotto Calculator <span class="live-badge"><span class="live-dot"></span> Live Jackpots</span></h1>
+  <p class="subtitle" id="lottoSubtitle">Jackpots updated July 22, 2026 · Edit fields below to adjust</p>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('custom')">
+      Custom
+      <span class="jackpot-pill">Enter any amount</span>
+    </button>
+    <button class="tab" onclick="setMode('powerball')" id="tabPB">
+      Powerball
+      <span class="jackpot-pill" id="pbPill">$567M · Cash $251.8M</span>
+    </button>
+    <button class="tab" onclick="setMode('megamillions')" id="tabMM">
+      Mega Millions
+      <span class="jackpot-pill" id="mmPill">$743M · Cash $323.4M</span>
+    </button>
+  </div>
+
+  <!-- Custom input -->
+  <div class="section" id="customInput">
+    <div class="section-title">Enter Cash Option Amount</div>
+    <div class="input-row">
+      <label>Cash Option (millions)</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="cashInput" value="323.4" step="0.1" min="0" oninput="update()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Powerball preset -->
+  <div class="section" id="pbInput" style="display:none">
+    <div class="section-title">Powerball — Current Jackpot</div>
+    <div class="jackpot-card">
+      <div class="jackpot-stat">
+        <div class="js-label">Advertised Jackpot</div>
+        <div class="js-val" id="pbJackpotDisplay">$567M</div>
+        <div class="js-sub">Annuity (30 payments)</div>
+      </div>
+      <div class="jackpot-stat">
+        <div class="js-label">Cash Option</div>
+        <div class="js-val" id="pbCashDisplay" style="color:#00C853">$251.8M</div>
+        <div class="js-sub">~44.4% of jackpot</div>
+      </div>
+    </div>
+    <p class="next-draw">Next drawing: <strong>Wed Jul 22, 2026</strong> · Drawing every Mon, Wed, Sat</p>
+    <p class="edit-note">Edit below to update jackpot figures</p>
+    <div class="input-row">
+      <label>Jackpot ($M)</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="pbJackpot" value="567" step="1" min="0" oninput="updatePreset('pb')">
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Cash Option ($M)</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="pbCash" value="251.8" step="0.1" min="0" oninput="updatePreset('pb')">
+      </div>
+    </div>
+  </div>
+
+  <!-- Mega Millions preset -->
+  <div class="section" id="mmInput" style="display:none">
+    <div class="section-title">Mega Millions — Current Jackpot</div>
+    <div class="jackpot-card">
+      <div class="jackpot-stat">
+        <div class="js-label">Advertised Jackpot</div>
+        <div class="js-val" id="mmJackpotDisplay">$743M</div>
+        <div class="js-sub">Annuity (30 payments)</div>
+      </div>
+      <div class="jackpot-stat">
+        <div class="js-label">Cash Option</div>
+        <div class="js-val" id="mmCashDisplay" style="color:#00C853">$323.4M</div>
+        <div class="js-sub">~45.2% of jackpot</div>
+      </div>
+    </div>
+    <p class="next-draw">Next drawing: <strong>Fri Jul 24, 2026</strong> · Drawing every Tue &amp; Fri</p>
+    <p class="edit-note">Edit below to update jackpot figures</p>
+    <div class="input-row">
+      <label>Jackpot ($M)</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="mmJackpot" value="743" step="1" min="0" oninput="updatePreset('mm')">
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Cash Option ($M)</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="mmCash" value="323.4" step="0.1" min="0" oninput="updatePreset('mm')">
+      </div>
+    </div>
+  </div>
+
+  <!-- Tax breakdown -->
+  <div class="section">
+    <div class="section-title">Tax Breakdown</div>
+    <div class="result-row">
+      <span class="result-label">Cash Option</span>
+      <span class="result-val" id="rCash">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Federal Withholding <span class="badge" id="bWith">24%</span></span>
+      <span class="result-val tax" id="rWithheld">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Initial Cash <span class="badge" id="bInit">76%</span></span>
+      <span class="result-val" id="rInitial">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Additional Tax Owed <span class="badge" id="bExtra">13%</span></span>
+      <span class="result-val tax" id="rExtra">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Cash After All Taxes <span class="badge" id="bFinal">63%</span></span>
+      <span class="result-val keep" id="rFinal">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Total Taxes <span class="badge" id="bTotal">37%</span></span>
+      <span class="result-val tax" id="rTotal">—</span>
+    </div>
+    <hr class="divider" style="margin-top:16px">
+    <div style="font-size:13px;color:#888;margin-bottom:12px">Adjust tax rates</div>
+    <div class="input-row" style="margin-bottom:8px">
+      <label style="font-size:13px">Federal Withholding (%)</label>
+      <div class="input-wrap">
+        <input type="number" id="tWith" value="24" step="0.5" min="0" max="50" class="no-prefix has-suffix" oninput="update()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <label style="font-size:13px">Additional Fed Tax (%)</label>
+      <div class="input-wrap">
+        <input type="number" id="tExtra" value="13" step="0.5" min="0" max="50" class="no-prefix has-suffix" oninput="update()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabbed income section -->
+  <div class="section">
+    <div class="income-tabs">
+      <button class="income-tab active" onclick="setIncomeTab('after')">After-Tax Cash</button>
+      <button class="income-tab" onclick="setIncomeTab('initial')">Initial Cash</button>
+      <button class="income-tab" onclick="setIncomeTab('custom')">Custom Amount</button>
+    </div>
+
+    <div class="income-panel active" id="panel-after">
+      <p style="font-size:13px;color:#888;margin-bottom:14px">Passive income on cash after all taxes</p>
+      <div class="slider-row">
+        <label>Interest Rate</label>
+        <input type="range" id="rate1" min="1" max="30" step="0.5" value="12" oninput="update()">
+        <span class="slider-val" id="rate1Out">12%</span>
+      </div>
+      <div class="income-grid" id="incomeGrid1"></div>
+    </div>
+
+    <div class="income-panel" id="panel-initial">
+      <p style="font-size:13px;color:#888;margin-bottom:14px">Based on the 76% cash before the additional tax is paid</p>
+      <div class="slider-row">
+        <label>Interest Rate</label>
+        <input type="range" id="rate2" min="1" max="30" step="0.5" value="12" oninput="update()">
+        <span class="slider-val" id="rate2Out">12%</span>
+      </div>
+      <div class="income-grid" id="incomeGrid2"></div>
+    </div>
+
+    <div class="income-panel" id="panel-custom">
+      <p style="font-size:13px;color:#888;margin-bottom:14px">Calculate passive income from any capital amount</p>
+      <div class="input-row">
+        <label>Capital (millions)</label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="customCapital" value="15" step="0.1" min="0" oninput="update()">
+        </div>
+      </div>
+      <div class="slider-row">
+        <label>Interest Rate</label>
+        <input type="range" id="rate3" min="1" max="30" step="0.5" value="12" oninput="update()">
+        <span class="slider-val" id="rate3Out">12%</span>
+      </div>
+      <div class="income-grid" id="incomeGrid3"></div>
+      <button class="toggle-btn" onclick="toggleRateTable()">Show Rate Comparison</button>
+      <div id="rateTableWrap" style="display:none;margin-top:16px;">
+        <table class="rate-table">
+          <thead><tr><th>Rate</th><th>Yearly</th><th>Monthly</th><th>Weekly</th><th>Daily</th></tr></thead>
+          <tbody id="rateTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BUSINESS PANEL ============ -->
+<div id="app-business" class="app-panel">
+  <h1>📊 Business Revenue Calculator</h1>
+  <p class="subtitle">Model revenue, profit, and valuation from your client base</p>
+
+  <div class="section">
+    <div class="section-title">Your numbers</div>
+    <div class="input-row">
+      <label>Number of clients</label>
+      <div class="input-wrap">
+        <input type="number" id="b-clients" value="73000" step="1" min="0" class="no-prefix" oninput="bClientsInput()">
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Avg paid per client / month</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="b-monthly" value="375" step="100" min="0" oninput="bMonthlyInput()">
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Net profit margin</label>
+      <div class="input-wrap">
+        <input type="number" id="b-net" value="65" step="1" min="0" max="100" class="no-prefix has-suffix" oninput="bNetInput()">
+        <span class="suffix">%</span>
+      </div>
+    </div>
+    <span class="label-cap" style="margin-top:6px">Hours counted per day (for hourly figures)</span>
+    <div class="seg" style="max-width:300px">
+      <button class="seg-btn" data-hpd="24" onclick="bSetHours(24)">24 hrs/day</button>
+      <button class="seg-btn" data-hpd="8" onclick="bSetHours(8)">8 hrs/day</button>
+    </div>
+  </div>
+
+  <div class="total-banner">
+    <div class="tb-label">Annual gross &middot; net</div>
+    <div class="tb-val"><span id="b-gross-year">—</span> <span style="color:#7ee8bd; font-size:24px">/ <span id="b-net-year">—</span> net</span></div>
+    <div class="tb-sub" id="b-banner-sub"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Gross &amp; Net breakdown</div>
+    <div class="t-table-wrap" style="max-height:none">
+      <table class="t-table">
+        <thead><tr><th>Per</th><th class="num">Gross</th><th class="num">Expense</th><th class="num">Net</th></tr></thead>
+        <tbody id="b-tbody"></tbody>
+      </table>
+    </div>
+    <p class="edit-note" id="b-foot" style="margin-top:12px"></p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Valuation</div>
+    <div class="input-row">
+      <label>Revenue multiple (× annual gross)</label>
+      <div class="input-wrap">
+        <input type="number" id="b-revmult" value="3" step="0.1" min="0" class="no-prefix has-suffix" oninput="bRevMultInput()">
+        <span class="suffix">×</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <label>Profit multiple (× annual net)</label>
+      <div class="input-wrap">
+        <input type="number" id="b-profmult" value="5" step="0.1" min="0" class="no-prefix has-suffix" oninput="bProfMultInput()">
+        <span class="suffix">×</span>
+      </div>
+    </div>
+    <hr class="divider" style="margin-top:8px">
+    <div class="result-row">
+      <span class="result-label">Valuation on gross <span class="badge" id="b-revmult-badge">2×</span></span>
+      <span class="result-val" id="b-val-gross">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Valuation on net profit <span class="badge" id="b-profmult-badge">5×</span></span>
+      <span class="result-val keep" id="b-val-net">—</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label"><strong>Valuation (average of both)</strong></span>
+      <span class="result-val" id="b-val-avg" style="font-size:17px">—</span>
+    </div>
+  </div>
+
+  <details class="solver">
+    <summary><span>Reverse — solve clients from a target</span><span class="plus">+</span></summary>
+    <div class="input-row" style="margin-bottom:14px">
+      <label>Target amount</label>
+      <div class="input-wrap">
+        <span class="prefix">$</span>
+        <input type="number" id="b-target" value="1000000" step="10000" min="0" oninput="bTargetInput()">
+      </div>
+    </div>
+    <span class="label-cap">This figure is…</span>
+    <div class="seg" style="max-width:260px; margin-bottom:16px">
+      <button class="seg-btn" data-rb="gross" onclick="bSetBasis('gross')">Gross</button>
+      <button class="seg-btn" data-rb="net" onclick="bSetBasis('net')">Net</button>
+    </div>
+    <span class="label-cap">…per</span>
+    <div class="seg" style="margin-bottom:18px">
+      <button class="seg-btn" data-rp="year" onclick="bSetPeriod('year')">Year</button>
+      <button class="seg-btn" data-rp="month" onclick="bSetPeriod('month')">Month</button>
+      <button class="seg-btn" data-rp="week" onclick="bSetPeriod('week')">Week</button>
+      <button class="seg-btn" data-rp="day" onclick="bSetPeriod('day')">Day</button>
+      <button class="seg-btn" data-rp="hour" onclick="bSetPeriod('hour')">Hour</button>
+    </div>
+    <div class="solver-grid">
+      <div style="flex:1; min-width:160px">
+        <span class="label-cap" id="b-req-label">Clients needed</span>
+        <div class="req" id="b-req">—</div>
+        <p class="edit-note" id="b-req-sub" style="margin:6px 0 0"></p>
+      </div>
+      <button class="apply-btn" onclick="bApplyReverse()">Apply as clients</button>
+    </div>
+    <p class="edit-note" style="margin:14px 0 0">Holds your avg monthly pay and net % fixed and solves how many clients you'd need. Change those above and this updates.</p>
+  </details>
+</div>
+
+<script>
+/* ============ App switcher ============ */
+function setApp(which) {
+  ['tenure', 'lotto', 'business'].forEach(name =>
+    document.getElementById('app-' + name).classList.toggle('active', name === which));
+  document.getElementById('appTabTenure').classList.toggle('active', which === 'tenure');
+  document.getElementById('appTabLotto').classList.toggle('active', which === 'lotto');
+  document.getElementById('appTabBusiness').classList.toggle('active', which === 'business');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Select all text on input focus (applies to both calculators) */
+document.addEventListener('focusin', e => {
+  if (e.target.tagName === 'INPUT' && e.target.type === 'number') e.target.select();
+});
+
+/* ============ Tenure calculator ============ */
+const t = {
+  baseRate: 10000, period: 'month', growthMode: 'percent', growthPct: 12,
+  viewUnit: 'year', years: 15, months: 24, targetTotal: 10000000, targetYear: 14,
+  startYear: 2012, startMonth: 9
+};
+
+function tPPY() { return t.period === 'week' ? 52 : t.period === 'month' ? 12 : 1; }
+function tRate(n) { return t.growthMode === 'percent' ? t.baseRate * Math.pow(1 + t.growthPct / 100, n - 1) : n * t.baseRate; }
+function tMS(n) {
+  if (t.growthMode === 'percent') { const g = 1 + t.growthPct / 100; return g === 1 ? n : (Math.pow(g, n) - 1) / (g - 1); }
+  return n * (n + 1) / 2;
+}
+function tFmt(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
+
+function tBaseInput() { t.baseRate = Math.max(0, Math.floor(+document.getElementById('t-base').value || 0)); tRender(); }
+function tSetBase(v) { t.baseRate = Math.max(0, Math.round(v)); document.getElementById('t-base').value = t.baseRate; tRender(); }
+function tAddBase(a) { tSetBase(t.baseRate + a); }
+function tStartInput() {
+  t.startYear = Math.floor(+document.getElementById('t-syear').value || t.startYear);
+  t.startMonth = Math.floor(+document.getElementById('t-smonth').value || t.startMonth);
+  tRender();
+}
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function tCalYearLabel(tenureYearN) {
+  // shows the calendar month/year that tenure year N begins
+  const y = t.startYear + (tenureYearN - 1);
+  return MONTH_ABBR[t.startMonth - 1] + ' ' + y;
+}
+function tCalMonthLabel(monthIdx) {
+  // monthIdx is 1-based tenure month
+  const totalMonths = (t.startMonth - 1) + (monthIdx - 1);
+  const y = t.startYear + Math.floor(totalMonths / 12);
+  const mo = totalMonths % 12;
+  return MONTH_ABBR[mo] + ' ' + y;
+}
+function tPctInput() { t.growthPct = Math.max(0, +document.getElementById('t-pct').value || 0); tRender(); }
+function tSetGrowth(m) { t.growthMode = m; tRender(); }
+function tSetPeriod(p) { t.period = p; tRender(); }
+function tSetView(v) {
+  t.viewUnit = v;
+  const s = document.getElementById('t-horizon');
+  if (v === 'year') { s.min = 1; s.max = 30; s.value = t.years; }
+  else { s.min = 1; s.max = 360; s.value = t.months; }
+  tRender();
+}
+function tHorizonInput() { const v = +document.getElementById('t-horizon').value; if (t.viewUnit === 'year') t.years = v; else t.months = v; tRender(); }
+function tTargetInput() { t.targetTotal = Math.max(0, Math.floor(+document.getElementById('t-target').value || 0)); tRender(); }
+function tTyearInput() { t.targetYear = Math.min(30, Math.max(1, Math.floor(+document.getElementById('t-tyear').value || 1))); tRender(); }
+function tApply() { const ppy = tPPY(); const solved = (t.targetYear >= 1 && ppy > 0) ? t.targetTotal / (ppy * tMS(t.targetYear)) : 0; tSetBase(Math.round(solved)); }
+
+function tRender() {
+  // sync toggle active states
+  document.querySelectorAll('[data-gm]').forEach(b => b.classList.toggle('active', b.dataset.gm === t.growthMode));
+  document.querySelectorAll('[data-pf]').forEach(b => b.classList.toggle('active', b.dataset.pf === t.period));
+  document.querySelectorAll('[data-vu]').forEach(b => b.classList.toggle('active', b.dataset.vu === t.viewUnit));
+  document.getElementById('t-pct-row').style.display = t.growthMode === 'percent' ? '' : 'none';
+  document.getElementById('t-growth-note').textContent = t.growthMode === 'multiple'
+    ? 'Year N pays N × the base rate (year 1 = 1×, year 2 = 2×, …).'
+    : 'Year 1 = the base rate, then compounds +' + t.growthPct + '% each year.';
+  document.getElementById('t-syear').value = t.startYear;
+  document.getElementById('t-smonth').value = t.startMonth;
+
+  const ppy = tPPY();
+  const label = t.period;
+
+  // accumulated from start date to today (real device date) — the current in-progress
+  // month counts as a full month as soon as it begins
+  const now = new Date();
+  const startDate = new Date(t.startYear, t.startMonth - 1, 1);
+  let elapsedMonths = (now.getFullYear() - t.startYear) * 12 + (now.getMonth() - (t.startMonth - 1)) + 1;
+  if (elapsedMonths < 0) elapsedMonths = 0;
+  const elapsedYearsWhole = Math.floor(elapsedMonths / 12);
+  const elapsedRemMonths = elapsedMonths - elapsedYearsWhole * 12;
+  let sinceTotal = 0;
+  for (let n = 1; n <= elapsedYearsWhole; n++) sinceTotal += tRate(n) * ppy;
+  if (elapsedRemMonths > 0) sinceTotal += (elapsedRemMonths / 12) * tRate(elapsedYearsWhole + 1) * ppy;
+  const yrsPart = Math.floor(elapsedMonths / 12), moPart = elapsedMonths - yrsPart * 12;
+  const sinceParts = [];
+  if (yrsPart) sinceParts.push(yrsPart + ' yr' + (yrsPart === 1 ? '' : 's'));
+  if (moPart || !yrsPart) sinceParts.push(moPart + ' mo' + (moPart === 1 ? '' : 's'));
+  document.getElementById('t-since-note').textContent =
+    'Start date: ' + MONTH_ABBR[t.startMonth - 1] + ' ' + t.startYear + ' \u2014 ' + sinceParts.join(' ') + ' ago from today.';
+  if (now < startDate) {
+    document.getElementById('t-since-val').textContent = '$0';
+    document.getElementById('t-since-sub').textContent = 'Start date is in the future \u2014 nothing accumulated yet.';
+  } else {
+    document.getElementById('t-since-val').textContent = tFmt(sinceTotal);
+    document.getElementById('t-since-sub').textContent =
+      sinceParts.join(' ') + ' since ' + MONTH_ABBR[t.startMonth - 1] + ' ' + t.startYear + ' \u2022 as of today (' +
+      MONTH_ABBR[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear() + ')';
+  }
+
+  // horizon label
+  if (t.viewUnit === 'year') {
+    document.getElementById('t-horizon-label').textContent = 'Horizon — ' + t.years + ' year' + (t.years === 1 ? '' : 's');
+  } else {
+    const y = Math.floor(t.months / 12), mo = t.months % 12, parts = [];
+    if (y) parts.push(y + ' yr' + (y === 1 ? '' : 's'));
+    if (mo) parts.push(mo + ' mo');
+    document.getElementById('t-horizon-label').textContent =
+      'Horizon — ' + t.months + ' month' + (t.months === 1 ? '' : 's') + (parts.length ? ' (' + parts.join(' ') + ')' : '');
+  }
+
+  // rows
+  let cum = 0; const rows = [];
+  if (t.viewUnit === 'year') {
+    for (let n = 1; n <= t.years; n++) { const per = tRate(n); const chunk = per * ppy; cum += chunk; rows.push({ label: n, ty: n, per, chunk, cum }); }
+  } else {
+    for (let m = 1; m <= t.months; m++) { const ty = Math.ceil(m / 12); const per = tRate(ty); const yt = per * ppy; const chunk = yt / 12; cum += chunk; rows.push({ label: m, ty, per, chunk, yt, cum }); }
+  }
+  const grand = rows.length ? rows[rows.length - 1].cum : 0;
+  const horizon = t.viewUnit === 'year' ? t.years : t.months;
+
+  // total banner
+  document.getElementById('t-total-label').textContent = 'Total accumulation through ' + t.viewUnit + ' ' + horizon;
+  document.getElementById('t-total-val').textContent = tFmt(grand);
+  document.getElementById('t-total-sub').textContent = t.period === 'year'
+    ? 'paid once per year'
+    : 'paid per ' + label + ' · ' + ppy + ' ' + label + 's / yr';
+
+  // solver
+  const solved = (t.targetYear >= 1 && ppy > 0) ? t.targetTotal / (ppy * tMS(t.targetYear)) : 0;
+  document.getElementById('t-req').textContent = tFmt(solved);
+  document.getElementById('t-req-label').textContent =
+    'Required base rate (' + (t.growthMode === 'percent' ? t.growthPct + '% / yr' : '× tenure') + ', per ' + label + ')';
+
+  // table
+  let thead, body = '';
+  if (t.viewUnit === 'year') {
+    thead = '<tr><th>Year</th><th>Calendar</th><th>Per ' + label + '</th><th class="num">That year\u2019s total</th><th class="num">Per month \u2248</th><th class="num">Per week \u2248</th><th class="num">Per day \u2248</th><th class="num">Cumulative</th></tr>';
+    rows.forEach(r => {
+      body += '<tr><td data-label="Year">' + r.label + '</td><td class="muted" data-label="Calendar">' + tCalYearLabel(r.label) +
+        '</td><td data-label="Per ' + label + '">' + tFmt(r.per) + '</td><td class="num" data-label="That year\u2019s total">' + tFmt(r.chunk) +
+        '</td><td class="num muted" data-label="Per month \u2248">' + tFmt(r.chunk / 12) + '</td><td class="num muted" data-label="Per week \u2248">' + tFmt(r.chunk / 52) +
+        '</td><td class="num muted" data-label="Per day \u2248">' + tFmt(r.chunk / 365) + '</td><td class="cum" data-label="Cumulative">' + tFmt(r.cum) + '</td></tr>';
+    });
+  } else {
+    thead = '<tr><th>Month</th><th>Calendar</th><th>Yr</th><th>Per ' + label + '</th><th class="num">This month</th><th class="num">That year</th><th class="num">Cumulative</th></tr>';
+    rows.forEach(r => {
+      body += '<tr><td data-label="Month">' + r.label + '</td><td class="muted" data-label="Calendar">' + tCalMonthLabel(r.label) + '</td><td class="muted" data-label="Yr">' + r.ty + '</td><td data-label="Per ' + label + '">' + tFmt(r.per) +
+        '</td><td class="num" data-label="This month">' + tFmt(r.chunk) + '</td><td class="num" data-label="That year">' + tFmt(r.yt) + '</td><td class="cum" data-label="Cumulative">' + tFmt(r.cum) + '</td></tr>';
+    });
+  }
+  document.getElementById('t-thead').innerHTML = thead;
+  document.getElementById('t-tbody').innerHTML = body;
+
+  document.getElementById('t-foot').textContent =
+    (t.growthMode === 'multiple'
+      ? 'The per-' + label + ' rate steps up each tenure year (year N pays N × base).'
+      : 'The per-' + label + ' rate compounds +' + t.growthPct + '% each tenure year.') +
+    ' Equivalents use 12 months / 52 weeks / 365 days per year.';
+}
+
+/* ============ Lotto calculator ============ */
+let mode = 'custom';
+let rateTableVisible = false;
+
+function setIncomeTab(tab) {
+  document.querySelectorAll('.income-tab').forEach((tb, i) => tb.classList.toggle('active', ['after', 'initial', 'custom'][i] === tab));
+  document.querySelectorAll('.income-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('#app-lotto .tab').forEach((tb, i) => tb.classList.toggle('active', ['custom', 'powerball', 'megamillions'][i] === m));
+  document.getElementById('customInput').style.display = m === 'custom' ? '' : 'none';
+  document.getElementById('pbInput').style.display = m === 'powerball' ? '' : 'none';
+  document.getElementById('mmInput').style.display = m === 'megamillions' ? '' : 'none';
+  update();
+}
+
+function lottoMaxCash() {
+  const pb = parseFloat(document.getElementById('pbCash').value) || 0;
+  const mm = parseFloat(document.getElementById('mmCash').value) || 0;
+  return Math.max(pb, mm);
+}
+
+function syncCustomToMax() {
+  document.getElementById('cashInput').value = lottoMaxCash();
+}
+
+function updatePreset(type) {
+  if (type === 'pb') {
+    const j = parseFloat(document.getElementById('pbJackpot').value) || 0;
+    const c = parseFloat(document.getElementById('pbCash').value) || 0;
+    document.getElementById('pbJackpotDisplay').textContent = '$' + j + 'M';
+    document.getElementById('pbCashDisplay').textContent = '$' + c + 'M';
+    document.getElementById('pbPill').textContent = '$' + j + 'M · Cash $' + c + 'M';
+  } else {
+    const j = parseFloat(document.getElementById('mmJackpot').value) || 0;
+    const c = parseFloat(document.getElementById('mmCash').value) || 0;
+    document.getElementById('mmJackpotDisplay').textContent = '$' + j + 'M';
+    document.getElementById('mmCashDisplay').textContent = '$' + c + 'M';
+    document.getElementById('mmPill').textContent = '$' + j + 'M · Cash $' + c + 'M';
+  }
+  syncCustomToMax();
+  update();
+}
+
+function getCashM() {
+  if (mode === 'custom') return parseFloat(document.getElementById('cashInput').value) || 0;
+  if (mode === 'powerball') return parseFloat(document.getElementById('pbCash').value) || 0;
+  return parseFloat(document.getElementById('mmCash').value) || 0;
+}
+
+function fmt(v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+function buildIncomeGrid(capital, rate, containerId, deltaCapital) {
+  const y = capital * rate / 100, m = y / 12, w = y / 52, d = y / 365, h = d / 24, min = h / 60;
+  let dY = 0, dM = 0, dW = 0, dD = 0, dH = 0, dMin = 0;
+  if (deltaCapital) { dY = deltaCapital * rate / 100; dM = dY / 12; dW = dY / 52; dD = dY / 365; dH = dD / 24; dMin = dH / 60; }
+  const items = [
+    { label: 'Yearly', val: y, delta: dY }, { label: 'Monthly', val: m, delta: dM },
+    { label: 'Weekly', val: w, delta: dW }, { label: 'Daily', val: d, delta: dD },
+    { label: 'Hourly', val: h, delta: dH }, { label: 'Per Minute', val: min, delta: dMin }
+  ];
+  document.getElementById(containerId).innerHTML =
+    '<table class="t-table income-table"><thead><tr><th>Period</th><th class="num">Amount</th></tr></thead><tbody>' +
+    items.map(i => '<tr><td class="ic-label">' + i.label + '</td><td class="num ic-val">' + fmt(i.val) +
+      (i.delta ? '<div class="ic-delta-inline">+' + fmt(i.delta) + '</div>' : '') + '</td></tr>').join('') +
+    '</tbody></table>';
+}
+
+function buildRateTable(capM) {
+  const capital = capM * 1e6;
+  const rates = [3, 4, 5, 6, 7, 8, 10, 12, 15, 20];
+  document.getElementById('rateTableBody').innerHTML = rates.map(r => {
+    const y = capital * r / 100;
+    return `<tr><td data-label="Rate"><strong>${r}%</strong></td><td data-label="Yearly">${fmt(y)}</td><td data-label="Monthly">${fmt(y / 12)}</td><td data-label="Weekly">${fmt(y / 52)}</td><td data-label="Daily">${fmt(y / 365)}</td></tr>`;
+  }).join('');
+}
+
+function toggleRateTable() {
+  rateTableVisible = !rateTableVisible;
+  document.getElementById('rateTableWrap').style.display = rateTableVisible ? '' : 'none';
+  document.querySelector('.toggle-btn').textContent = rateTableVisible ? 'Hide Rate Comparison' : 'Show Rate Comparison';
+  if (rateTableVisible) buildRateTable(parseFloat(document.getElementById('customCapital').value) || 0);
+}
+
+function update() {
+  const cashM = getCashM();
+  const cash = cashM * 1e6;
+  const withPct = parseFloat(document.getElementById('tWith').value) || 0;
+  const extraPct = parseFloat(document.getElementById('tExtra').value) || 0;
+  const totalTaxPct = withPct + extraPct;
+  const initPct = 100 - withPct;
+  const finalPct = 100 - totalTaxPct;
+  const withheld = cash * withPct / 100;
+  const initial = cash * initPct / 100;
+  const extraTax = cash * extraPct / 100;
+  const finalCash = cash * finalPct / 100;
+  const totalTax = cash * totalTaxPct / 100;
+
+  document.getElementById('rCash').textContent = fmt(cash);
+  document.getElementById('rWithheld').textContent = '−' + fmt(withheld);
+  document.getElementById('rInitial').textContent = fmt(initial);
+  document.getElementById('rExtra').textContent = '−' + fmt(extraTax);
+  document.getElementById('rFinal').textContent = fmt(finalCash);
+  document.getElementById('rTotal').textContent = '−' + fmt(totalTax);
+  document.getElementById('bWith').textContent = withPct.toFixed(0) + '%';
+  document.getElementById('bInit').textContent = initPct.toFixed(0) + '%';
+  document.getElementById('bExtra').textContent = extraPct.toFixed(0) + '%';
+  document.getElementById('bFinal').textContent = finalPct.toFixed(0) + '%';
+  document.getElementById('bTotal').textContent = totalTaxPct.toFixed(0) + '%';
+
+  const r1 = parseFloat(document.getElementById('rate1').value);
+  const r2 = parseFloat(document.getElementById('rate2').value);
+  const r3 = parseFloat(document.getElementById('rate3').value);
+  document.getElementById('rate1Out').textContent = r1.toFixed(1) + '%';
+  document.getElementById('rate2Out').textContent = r2.toFixed(1) + '%';
+  document.getElementById('rate3Out').textContent = r3.toFixed(1) + '%';
+
+  buildIncomeGrid(finalCash, r1, 'incomeGrid1', null);
+  buildIncomeGrid(initial, r2, 'incomeGrid2', initial - finalCash > 0 ? initial - finalCash : null);
+
+  const capM = parseFloat(document.getElementById('customCapital').value) || 0;
+  buildIncomeGrid(capM * 1e6, r3, 'incomeGrid3', null);
+  if (rateTableVisible) buildRateTable(capM);
+}
+
+/* ============ Business calculator ============ */
+const b = {
+  clients: 73000, monthly: 375, netPct: 65, hoursPerDay: 8,
+  revMult: 3, profMult: 5,
+  rTarget: 1000000, rBasis: 'net', rPeriod: 'day'
+};
+
+function bFmt(v) {
+  const abs = Math.abs(v);
+  const dec = abs > 0 && abs < 100 ? 2 : 0;
+  return '$' + v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+function bNum(v) { return v.toLocaleString('en-US', { maximumFractionDigits: 2 }); }
+
+function bClientsInput() { b.clients = Math.max(0, +document.getElementById('b-clients').value || 0); bRender(); }
+function bMonthlyInput() { b.monthly = Math.max(0, +document.getElementById('b-monthly').value || 0); bRender(); }
+function bNetInput() { b.netPct = Math.min(100, Math.max(0, +document.getElementById('b-net').value || 0)); bRender(); }
+function bRevMultInput() { b.revMult = Math.max(0, +document.getElementById('b-revmult').value || 0); bRender(); }
+function bProfMultInput() { b.profMult = Math.max(0, +document.getElementById('b-profmult').value || 0); bRender(); }
+function bTargetInput() { b.rTarget = Math.max(0, Math.floor(+document.getElementById('b-target').value || 0)); bRender(); }
+function bSetHours(h) { b.hoursPerDay = h; bRender(); }
+function bSetBasis(x) { b.rBasis = x; bRender(); }
+function bSetPeriod(p) { b.rPeriod = p; bRender(); }
+
+function bPeriodsPerYear(period, hpd) {
+  return period === 'year' ? 1 : period === 'month' ? 12 : period === 'week' ? 52 : period === 'day' ? 365 : 365 * hpd;
+}
+
+function bApplyReverse() {
+  const m = b.netPct / 100;
+  const f = bPeriodsPerYear(b.rPeriod, b.hoursPerDay);
+  let grossPeriod = b.rBasis === 'gross' ? b.rTarget : (m > 0 ? b.rTarget / m : 0);
+  const grossYearNeeded = grossPeriod * f;
+  const clientsNeeded = b.monthly > 0 ? grossYearNeeded / (b.monthly * 12) : 0;
+  b.clients = Math.ceil(clientsNeeded);
+  document.getElementById('b-clients').value = b.clients;
+  bRender();
+}
+
+function bRender() {
+  // sync toggles
+  document.querySelectorAll('[data-hpd]').forEach(el => el.classList.toggle('active', +el.dataset.hpd === b.hoursPerDay));
+  document.querySelectorAll('[data-rb]').forEach(el => el.classList.toggle('active', el.dataset.rb === b.rBasis));
+  document.querySelectorAll('[data-rp]').forEach(el => el.classList.toggle('active', el.dataset.rp === b.rPeriod));
+
+  const m = b.netPct / 100;
+  const grossYear = b.clients * b.monthly * 12;
+  const netYear = grossYear * m;
+
+  // banner
+  document.getElementById('b-gross-year').textContent = bFmt(grossYear);
+  document.getElementById('b-net-year').textContent = bFmt(netYear);
+  document.getElementById('b-banner-sub').textContent =
+    b.clients + ' client' + (b.clients === 1 ? '' : 's') + ' × ' + bFmt(b.monthly) + '/mo · ' + b.netPct + '% net margin';
+
+  // breakdown table
+  const rows = [
+    { label: 'Year', f: 1 },
+    { label: 'Month', f: 12 },
+    { label: 'Week', f: 52 },
+    { label: 'Day', f: 365 },
+    { label: 'Hour (' + b.hoursPerDay + 'h/day)', f: 365 * b.hoursPerDay }
+  ];
+  document.getElementById('b-tbody').innerHTML = rows.map(r => {
+    const g = grossYear / r.f, n = g * m, e = g - n;
+    return '<tr><td data-label="Per">' + r.label + '</td><td class="num" data-label="Gross">' + bFmt(g) +
+      '</td><td class="num" data-label="Expense" style="color:#e05252">' + bFmt(e) +
+      '</td><td class="num cum" data-label="Net" style="color:#00C853">' + bFmt(n) + '</td></tr>';
+  }).join('');
+  document.getElementById('b-foot').textContent =
+    'Hourly assumes ' + b.hoursPerDay + ' working hours/day. Week = year ÷ 52, day = year ÷ 365.';
+
+  // valuation
+  document.getElementById('b-revmult-badge').textContent = b.revMult + '×';
+  document.getElementById('b-profmult-badge').textContent = b.profMult + '×';
+  const valG = grossYear * b.revMult, valN = netYear * b.profMult;
+  document.getElementById('b-val-gross').textContent = bFmt(valG);
+  document.getElementById('b-val-net').textContent = bFmt(valN);
+  document.getElementById('b-val-avg').textContent = bFmt((valG + valN) / 2);
+
+  // reverse solver
+  const f = bPeriodsPerYear(b.rPeriod, b.hoursPerDay);
+  let grossPeriod = b.rBasis === 'gross' ? b.rTarget : (m > 0 ? b.rTarget / m : 0);
+  const grossYearNeeded = grossPeriod * f;
+  const clientsNeeded = b.monthly > 0 ? grossYearNeeded / (b.monthly * 12) : 0;
+  document.getElementById('b-req').textContent = (m === 0 && b.rBasis === 'net')
+    ? 'Set net % > 0'
+    : (b.monthly === 0 ? 'Set monthly pay > 0' : bNum(clientsNeeded) + ' clients');
+  document.getElementById('b-req-label').textContent =
+    'Clients needed for ' + bFmt(b.rTarget) + ' ' + b.rBasis + '/' + b.rPeriod;
+  document.getElementById('b-req-sub').textContent =
+    (b.monthly > 0 && (m > 0 || b.rBasis === 'gross'))
+      ? 'Round up to ' + Math.ceil(clientsNeeded) + ' · implies ' + bFmt(grossYearNeeded) + ' gross/yr'
+      : '';
+}
+
+/* Live jackpot data — fetched from data/jackpots.json, which a scheduled
+   GitHub Action keeps current. Falls back silently to the hardcoded values
+   above if the file isn't reachable (e.g. first run before the Action has
+   executed, or opened outside its hosted folder). */
+function loadLiveJackpots() {
+  fetch('./data/jackpots.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('no data file'); return r.json(); })
+    .then(d => {
+      if (d.powerball && d.powerball.jackpotMillions) {
+        document.getElementById('pbJackpot').value = d.powerball.jackpotMillions;
+        document.getElementById('pbCash').value = d.powerball.cashMillions;
+        updatePreset('pb');
+      }
+      if (d.megaMillions && d.megaMillions.jackpotMillions) {
+        document.getElementById('mmJackpot').value = d.megaMillions.jackpotMillions;
+        document.getElementById('mmCash').value = d.megaMillions.cashMillions;
+        updatePreset('mm');
+      }
+      if (d.lastUpdated) {
+        const dt = new Date(d.lastUpdated);
+        const label = dt.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+        document.getElementById('lottoSubtitle').textContent = 'Jackpots auto-updated ' + label + ' \u00b7 Edit fields below to adjust';
+      }
+    })
+    .catch(() => { /* keep the hardcoded fallback values already in the page */ });
+}
+
+/* Initial render */
+syncCustomToMax();
+tRender();
+update();
+bRender();
+loadLiveJackpots();
+</script>
+</body>
+</html>
