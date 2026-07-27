@@ -205,13 +205,13 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
 
 <!-- App switcher -->
 <div class="app-tabs">
-  <button class="app-tab active" id="appTabTenure" onclick="setApp('tenure')">💼 Tenure</button>
+  <button class="app-tab active" id="appTabLotto" onclick="setApp('lotto')">🎰 Lotto</button>
   <button class="app-tab" id="appTabBusiness" onclick="setApp('business')">📊 Business</button>
-  <button class="app-tab" id="appTabLotto" onclick="setApp('lotto')">🎰 Lotto</button>
+  <button class="app-tab" id="appTabTenure" onclick="setApp('tenure')">💼 Tenure</button>
 </div>
 
 <!-- ============ TENURE PANEL ============ -->
-<div id="app-tenure" class="app-panel active">
+<div id="app-tenure" class="app-panel">
   <h1>Tenure Pay Calculator</h1>
   <p class="subtitle">Pay that grows with how long someone has been with you</p>
 
@@ -333,9 +333,9 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
 </div>
 
 <!-- ============ LOTTO PANEL ============ -->
-<div id="app-lotto" class="app-panel">
+<div id="app-lotto" class="app-panel active">
   <h1>🎰 Lotto Calculator <span class="live-badge"><span class="live-dot"></span> Live Jackpots</span></h1>
-  <p class="subtitle" id="lottoSubtitle">Jackpots updated July 22, 2026 · Edit fields below to adjust</p>
+  <p class="subtitle" id="lottoSubtitle">Jackpots updated July 25, 2026 · Edit fields below to adjust</p>
 
   <!-- Tabs -->
   <div class="tabs">
@@ -345,11 +345,11 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
     </button>
     <button class="tab" onclick="setMode('powerball')" id="tabPB">
       Powerball
-      <span class="jackpot-pill" id="pbPill">$567M · Cash $251.8M</span>
+      <span class="jackpot-pill" id="pbPill">$600M · Cash $266.4M</span>
     </button>
     <button class="tab" onclick="setMode('megamillions')" id="tabMM">
       Mega Millions
-      <span class="jackpot-pill" id="mmPill">$743M · Cash $323.4M</span>
+      <span class="jackpot-pill" id="mmPill">$800M · Cash $344.2M</span>
     </button>
   </div>
 
@@ -360,7 +360,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
       <label>Cash Option (millions)</label>
       <div class="input-wrap">
         <span class="prefix">$</span>
-        <input type="number" id="cashInput" value="323.4" step="0.1" min="0" oninput="update()">
+        <input type="number" id="cashInput" value="344.2" step="0.1" min="0" oninput="update()">
       </div>
     </div>
   </div>
@@ -371,29 +371,29 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
     <div class="jackpot-card">
       <div class="jackpot-stat">
         <div class="js-label">Advertised Jackpot</div>
-        <div class="js-val" id="pbJackpotDisplay">$567M</div>
+        <div class="js-val" id="pbJackpotDisplay">$600M</div>
         <div class="js-sub">Annuity (30 payments)</div>
       </div>
       <div class="jackpot-stat">
         <div class="js-label">Cash Option</div>
-        <div class="js-val" id="pbCashDisplay" style="color:#00C853">$251.8M</div>
+        <div class="js-val" id="pbCashDisplay" style="color:#00C853">$266.4M</div>
         <div class="js-sub">~44.4% of jackpot</div>
       </div>
     </div>
-    <p class="next-draw">Next drawing: <strong>Wed Jul 22, 2026</strong> · Drawing every Mon, Wed, Sat</p>
+    <p class="next-draw">Next drawing: <strong>Sat Jul 25, 2026</strong> · Drawing every Mon, Wed, Sat</p>
     <p class="edit-note">Edit below to update jackpot figures</p>
     <div class="input-row">
       <label>Jackpot ($M)</label>
       <div class="input-wrap">
         <span class="prefix">$</span>
-        <input type="number" id="pbJackpot" value="567" step="1" min="0" oninput="updatePreset('pb')">
+        <input type="number" id="pbJackpot" value="600" step="1" min="0" oninput="updatePreset('pb')">
       </div>
     </div>
     <div class="input-row">
       <label>Cash Option ($M)</label>
       <div class="input-wrap">
         <span class="prefix">$</span>
-        <input type="number" id="pbCash" value="251.8" step="0.1" min="0" oninput="updatePreset('pb')">
+        <input type="number" id="pbCash" value="266.4" step="0.1" min="0" oninput="updatePreset('pb')">
       </div>
     </div>
   </div>
@@ -404,29 +404,29 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
     <div class="jackpot-card">
       <div class="jackpot-stat">
         <div class="js-label">Advertised Jackpot</div>
-        <div class="js-val" id="mmJackpotDisplay">$743M</div>
+        <div class="js-val" id="mmJackpotDisplay">$800M</div>
         <div class="js-sub">Annuity (30 payments)</div>
       </div>
       <div class="jackpot-stat">
         <div class="js-label">Cash Option</div>
-        <div class="js-val" id="mmCashDisplay" style="color:#00C853">$323.4M</div>
+        <div class="js-val" id="mmCashDisplay" style="color:#00C853">$344.2M</div>
         <div class="js-sub">~45.2% of jackpot</div>
       </div>
     </div>
-    <p class="next-draw">Next drawing: <strong>Fri Jul 24, 2026</strong> · Drawing every Tue &amp; Fri</p>
+    <p class="next-draw">Next drawing: <strong>Tue Jul 28, 2026</strong> · Drawing every Tue &amp; Fri</p>
     <p class="edit-note">Edit below to update jackpot figures</p>
     <div class="input-row">
       <label>Jackpot ($M)</label>
       <div class="input-wrap">
         <span class="prefix">$</span>
-        <input type="number" id="mmJackpot" value="743" step="1" min="0" oninput="updatePreset('mm')">
+        <input type="number" id="mmJackpot" value="800" step="1" min="0" oninput="updatePreset('mm')">
       </div>
     </div>
     <div class="input-row">
       <label>Cash Option ($M)</label>
       <div class="input-wrap">
         <span class="prefix">$</span>
-        <input type="number" id="mmCash" value="323.4" step="0.1" min="0" oninput="updatePreset('mm')">
+        <input type="number" id="mmCash" value="344.2" step="0.1" min="0" oninput="updatePreset('mm')">
       </div>
     </div>
   </div>
