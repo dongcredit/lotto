@@ -1,13 +1,13 @@
 {
-  "lastUpdated": "2026-07-27T14:43:25Z",
-  "powerball": {
-    "jackpotMillions": 633.0,
-    "cashMillions": 277.3,
-    "nextDraw": "2026-07-27"
-  },
-  "megaMillions": {
-    "jackpotMillions": 633.0,
-    "cashMillions": 277.3,
-    "nextDraw": "2026-07-28"
-  }
+    "lastUpdated": "2026-07-27T18:00:00Z",
+    "powerball": {
+          "jackpotMillions": 633,
+          "cashMillions": 277.3,
+          "nextDraw": "2026-07-27"
+    },
+    "megaMillions": {
+          "jackpotMillions": 800,
+          "cashMillions": 344.2,
+          "nextDraw": "2026-07-28"
+    }
 }
