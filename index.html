@@ -18,12 +18,12 @@ h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
 .subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
 .live-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  background: #eafaf3; color: #00C853; border: 1px solid #b6e8d3;
+  background: #eafaf3; color: #157347; border: 1px solid #b6e8d3;
   border-radius: 20px; font-size: 11px; font-weight: 600;
   padding: 3px 10px; margin-left: 8px; vertical-align: middle;
   letter-spacing: 0.04em;
 }
-.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #00C853; animation: pulse 1.8s infinite; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #157347; animation: pulse 1.8s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* App-level tabs */
@@ -34,7 +34,7 @@ h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
   color: #555; transition: all 0.15s; display: flex; align-items: center;
   justify-content: center; gap: 6px;
 }
-.app-tab.active { background: #0066FF; color: #fff; border-color: #0066FF; }
+.app-tab.active { background: #1A4F8A; color: #fff; border-color: #1A4F8A; }
 .app-tab:hover:not(.active) { border-color: #999; color: #111; }
 .app-panel { display: none; }
 .app-panel.active { display: block; }
@@ -46,10 +46,10 @@ h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
   background: #fff; cursor: pointer; font-size: clamp(11px, 3.4vw, 14px); font-weight: 500; text-align: center;
   transition: all 0.15s; position: relative;
 }
-.tab.active { background: #0066FF; color: #fff; border-color: #0066FF; }
+.tab.active { background: #1A4F8A; color: #fff; border-color: #1A4F8A; }
 .tab:hover:not(.active) { border-color: #999; }
-.tab .jackpot-pill { display: block; font-size: clamp(9px, 2.6vw, 10px); font-weight: 600; color: #00C853; margin-top: 1px; overflow-wrap: break-word; }
-.tab.active .jackpot-pill { color: #7ee8bd; }
+.tab .jackpot-pill { display: block; font-size: clamp(9px, 2.6vw, 10px); font-weight: 600; color: #157347; margin-top: 1px; overflow-wrap: break-word; }
+.tab.active .jackpot-pill { color: #9FDCBB; }
 
 /* Sections */
 .section { background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; padding: 20px 24px; margin-bottom: 16px; }
@@ -76,10 +76,10 @@ input[type=number] {
   border-radius: 8px; font-size: 15px; font-weight: 500; outline: none;
   transition: border-color 0.15s; background: #fff; color: #111;
 }
-input[type=number]:focus { border-color: #0066FF; }
+input[type=number]:focus { border-color: #1A4F8A; }
 input[type=number].no-prefix { padding-left: 12px; }
 input[type=number].has-suffix { padding-right: 28px; }
-input[type=range] { width: 100%; accent-color: #0066FF; }
+input[type=range] { width: 100%; accent-color: #1A4F8A; }
 
 /* Result rows */
 .result-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 14px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
@@ -88,7 +88,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
 .result-label .badge { display: inline-block; font-size: 11px; background: #f0f0f0; color: #666; border-radius: 4px; padding: 2px 6px; margin-left: 6px; }
 .result-val { font-weight: 600; color: #111; white-space: nowrap; margin-left: auto; text-align: right; }
 .result-val.tax { color: #e05252; }
-.result-val.keep { color: #00C853; }
+.result-val.keep { color: #157347; }
 
 /* Slider row */
 .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -100,7 +100,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
 .income-grid { display: block; }
 .income-table td.ic-label { color: #555; }
 .income-table td.ic-val { font-weight: 700; color: #111; }
-.income-table .ic-delta-inline { font-size: 11px; font-weight: 500; color: #00C853; margin-top: 2px; }
+.income-table .ic-delta-inline { font-size: 11px; font-weight: 500; color: #157347; margin-top: 2px; }
 
 /* Rate table */
 .rate-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
@@ -131,35 +131,35 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
   color: #666; transition: all 0.15s; display: flex; align-items: center;
   justify-content: center; gap: 5px; text-align: center;
 }
-.seg-btn.active { background: #00C853; border-color: #00C853; color: #fff; font-weight: 700; }
+.seg-btn.active { background: #157347; border-color: #157347; color: #fff; font-weight: 700; }
 .seg-btn:hover:not(.active) { border-color: #999; color: #111; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
 .chip { min-height: 40px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid #ddd; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; color: #111; transition: all 0.15s; }
-.chip:hover { background: #00C853; border-color: #00C853; color: #fff; }
+.chip:hover { background: #157347; border-color: #157347; color: #fff; }
 .chip:active { transform: scale(0.95); }
 .chip-clear { min-height: 40px; padding: 9px 14px; border-radius: 8px; border: 1.5px solid #e05252; background: #fff; cursor: pointer; font-size: 12px; font-weight: 700; color: #e05252; text-transform: uppercase; letter-spacing: 0.04em; transition: all 0.15s; }
 .chip-clear:hover { background: #e05252; color: #fff; }
 
-.total-banner { background: #0066FF; color: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; overflow-wrap: break-word; }
+.total-banner { background: #1A4F8A; color: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; overflow-wrap: break-word; }
 .total-banner .tb-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.85); }
 .total-banner .tb-val { font-size: clamp(24px, 7vw, 34px); font-weight: 700; margin-top: 4px; letter-spacing: -0.02em; line-height: 1.15; }
 .total-banner .tb-sub { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 4px; font-style: italic; }
 
 .solver { background: #fff; border: 2px dashed #ccc; border-radius: 12px; padding: 18px 22px; margin-bottom: 16px; }
 .solver summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #0066FF; }
+  font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #1A4F8A; }
 .solver summary::-webkit-details-marker { display: none; }
-.solver summary .plus { font-size: 20px; font-weight: 700; line-height: 1; color: #0066FF; transition: transform 0.15s; flex: none; }
+.solver summary .plus { font-size: 20px; font-weight: 700; line-height: 1; color: #1A4F8A; transition: transform 0.15s; flex: none; }
 .solver[open] summary .plus { transform: rotate(45deg); }
 .solver[open] summary { margin-bottom: 14px; }
 .solver-grid { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
-.solver .req { font-size: clamp(18px, 5vw, 24px); font-weight: 700; color: #00C853; overflow-wrap: break-word; }
+.solver .req { font-size: clamp(18px, 5vw, 24px); font-weight: 700; color: #157347; overflow-wrap: break-word; }
 .field-mini { display: flex; align-items: center; gap: 2px; border: 1.5px solid #ddd; border-radius: 8px; padding: 9px 10px; background: #fff; min-height: 44px; box-sizing: border-box; }
-.field-mini:focus-within { border-color: #0066FF; }
+.field-mini:focus-within { border-color: #1A4F8A; }
 .field-mini span { color: #888; font-size: 15px; }
 .field-mini input { border: none; outline: none; background: none; padding: 0; font-size: 15px; font-weight: 500; width: 100%; color: #111; }
-.apply-btn { min-height: 44px; padding: 11px 18px; border-radius: 8px; border: 2px solid #00C853; background: #00C853; color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: all 0.15s; }
+.apply-btn { min-height: 44px; padding: 11px 18px; border-radius: 8px; border: 2px solid #157347; background: #157347; color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: all 0.15s; }
 .apply-btn:hover { background: #00A344; border-color: #00A344; }
 .apply-btn:active { transform: scale(0.97); }
 
@@ -215,7 +215,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
   <h1>Tenure Pay Calculator</h1>
   <p class="subtitle">Pay that grows with how long someone has been with you</p>
 
-  <div class="total-banner" style="background:#00C853">
+  <div class="total-banner" style="background:#157347">
     <div class="tb-label" id="t-since-label">Accumulated from start date to today</div>
     <div class="tb-val" id="t-since-val" style="font-size:28px">—</div>
     <div class="tb-sub" id="t-since-sub"></div>
@@ -279,9 +279,18 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
     <div class="input-row" id="t-pct-row" style="margin-top:16px; margin-bottom:0">
       <label style="font-size:13px">Growth per year</label>
       <div class="input-wrap">
-        <input type="number" id="t-pct" value="12" step="0.5" min="0" class="no-prefix has-suffix" oninput="tPctInput()">
+        <input type="number" id="t-pct" value="12" step="0.25" min="0" class="no-prefix has-suffix" oninput="tPctInput()">
         <span class="suffix">%</span>
       </div>
+    </div>
+    <div class="chips" id="t-pct-chips">
+      <button class="chip" onclick="tAddPct(0.25)">+.25%</button>
+      <button class="chip" onclick="tAddPct(0.5)">+.50%</button>
+      <button class="chip" onclick="tAddPct(1)">+1%</button>
+      <button class="chip" onclick="tAddPct(5)">+5%</button>
+      <button class="chip" onclick="tAddPct(10)">+10%</button>
+      <button class="chip" onclick="tAddPct(20)">+20%</button>
+      <button class="chip-clear" onclick="tSetPct(0)">Clear</button>
     </div>
     <p class="edit-note" id="t-growth-note" style="margin:12px 0 0"></p>
   </div>
@@ -376,7 +385,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
       </div>
       <div class="jackpot-stat">
         <div class="js-label">Cash Option</div>
-        <div class="js-val" id="pbCashDisplay" style="color:#00C853">$266.4M</div>
+        <div class="js-val" id="pbCashDisplay" style="color:#157347">$266.4M</div>
         <div class="js-sub">~44.4% of jackpot</div>
       </div>
     </div>
@@ -409,7 +418,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
       </div>
       <div class="jackpot-stat">
         <div class="js-label">Cash Option</div>
-        <div class="js-val" id="mmCashDisplay" style="color:#00C853">$344.2M</div>
+        <div class="js-val" id="mmCashDisplay" style="color:#157347">$344.2M</div>
         <div class="js-sub">~45.2% of jackpot</div>
       </div>
     </div>
@@ -488,8 +497,17 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
       <p style="font-size:13px;color:#888;margin-bottom:14px">Passive income on cash after all taxes</p>
       <div class="slider-row">
         <label>Interest Rate</label>
-        <input type="range" id="rate1" min="1" max="30" step="0.5" value="12" oninput="update()">
-        <span class="slider-val" id="rate1Out">12%</span>
+        <input type="range" id="rate1" min="0" max="100" step="0.25" value="3.5" oninput="update()">
+        <span class="slider-val" id="rate1Out">3.5%</span>
+      </div>
+      <div class="chips" style="margin-top:0;margin-bottom:16px">
+        <button class="chip" onclick="lAddRate(1,0.25)">+.25%</button>
+        <button class="chip" onclick="lAddRate(1,0.5)">+.50%</button>
+        <button class="chip" onclick="lAddRate(1,1)">+1%</button>
+        <button class="chip" onclick="lAddRate(1,5)">+5%</button>
+        <button class="chip" onclick="lAddRate(1,10)">+10%</button>
+        <button class="chip" onclick="lAddRate(1,20)">+20%</button>
+        <button class="chip-clear" onclick="lSetRate(1,0)">Clear</button>
       </div>
       <div class="income-grid" id="incomeGrid1"></div>
     </div>
@@ -498,8 +516,17 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
       <p style="font-size:13px;color:#888;margin-bottom:14px">Based on the 76% cash before the additional tax is paid</p>
       <div class="slider-row">
         <label>Interest Rate</label>
-        <input type="range" id="rate2" min="1" max="30" step="0.5" value="12" oninput="update()">
-        <span class="slider-val" id="rate2Out">12%</span>
+        <input type="range" id="rate2" min="0" max="100" step="0.25" value="3.5" oninput="update()">
+        <span class="slider-val" id="rate2Out">3.5%</span>
+      </div>
+      <div class="chips" style="margin-top:0;margin-bottom:16px">
+        <button class="chip" onclick="lAddRate(2,0.25)">+.25%</button>
+        <button class="chip" onclick="lAddRate(2,0.5)">+.50%</button>
+        <button class="chip" onclick="lAddRate(2,1)">+1%</button>
+        <button class="chip" onclick="lAddRate(2,5)">+5%</button>
+        <button class="chip" onclick="lAddRate(2,10)">+10%</button>
+        <button class="chip" onclick="lAddRate(2,20)">+20%</button>
+        <button class="chip-clear" onclick="lSetRate(2,0)">Clear</button>
       </div>
       <div class="income-grid" id="incomeGrid2"></div>
     </div>
@@ -515,8 +542,17 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
       </div>
       <div class="slider-row">
         <label>Interest Rate</label>
-        <input type="range" id="rate3" min="1" max="30" step="0.5" value="12" oninput="update()">
-        <span class="slider-val" id="rate3Out">12%</span>
+        <input type="range" id="rate3" min="0" max="100" step="0.25" value="3.5" oninput="update()">
+        <span class="slider-val" id="rate3Out">3.5%</span>
+      </div>
+      <div class="chips" style="margin-top:0;margin-bottom:16px">
+        <button class="chip" onclick="lAddRate(3,0.25)">+.25%</button>
+        <button class="chip" onclick="lAddRate(3,0.5)">+.50%</button>
+        <button class="chip" onclick="lAddRate(3,1)">+1%</button>
+        <button class="chip" onclick="lAddRate(3,5)">+5%</button>
+        <button class="chip" onclick="lAddRate(3,10)">+10%</button>
+        <button class="chip" onclick="lAddRate(3,20)">+20%</button>
+        <button class="chip-clear" onclick="lSetRate(3,0)">Clear</button>
       </div>
       <div class="income-grid" id="incomeGrid3"></div>
       <button class="toggle-btn" onclick="toggleRateTable()">Show Rate Comparison</button>
@@ -566,7 +602,7 @@ input[type=range] { width: 100%; accent-color: #0066FF; }
 
   <div class="total-banner">
     <div class="tb-label">Annual gross &middot; net</div>
-    <div class="tb-val"><span id="b-gross-year">—</span> <span style="color:#7ee8bd; font-size:24px">/ <span id="b-net-year">—</span> net</span></div>
+    <div class="tb-val"><span id="b-gross-year">—</span> <span style="color:#9FDCBB; font-size:24px">/ <span id="b-net-year">—</span> net</span></div>
     <div class="tb-sub" id="b-banner-sub"></div>
   </div>
 
@@ -699,6 +735,12 @@ function tCalMonthLabel(monthIdx) {
   return MONTH_ABBR[mo] + ' ' + y;
 }
 function tPctInput() { t.growthPct = Math.max(0, +document.getElementById('t-pct').value || 0); tRender(); }
+function tSetPct(v) {
+  t.growthPct = Math.max(0, Math.round(v * 100) / 100);
+  document.getElementById('t-pct').value = t.growthPct;
+  tRender();
+}
+function tAddPct(a) { tSetPct(t.growthPct + a); }
 function tSetGrowth(m) { t.growthMode = m; tRender(); }
 function tSetPeriod(p) { t.period = p; tRender(); }
 function tSetView(v) {
@@ -719,6 +761,7 @@ function tRender() {
   document.querySelectorAll('[data-pf]').forEach(b => b.classList.toggle('active', b.dataset.pf === t.period));
   document.querySelectorAll('[data-vu]').forEach(b => b.classList.toggle('active', b.dataset.vu === t.viewUnit));
   document.getElementById('t-pct-row').style.display = t.growthMode === 'percent' ? '' : 'none';
+  document.getElementById('t-pct-chips').style.display = t.growthMode === 'percent' ? '' : 'none';
   document.getElementById('t-growth-note').textContent = t.growthMode === 'multiple'
     ? 'Year N pays N × the base rate (year 1 = 1×, year 2 = 2×, …).'
     : 'Year 1 = the base rate, then compounds +' + t.growthPct + '% each year.';
@@ -903,6 +946,17 @@ function toggleRateTable() {
   if (rateTableVisible) buildRateTable(parseFloat(document.getElementById('customCapital').value) || 0);
 }
 
+function lSetRate(n, v) {
+  const el = document.getElementById('rate' + n);
+  const min = parseFloat(el.min), max = parseFloat(el.max);
+  const clamped = Math.min(max, Math.max(min, Math.round(v * 100) / 100));
+  el.value = clamped;
+  update();
+}
+function lAddRate(n, a) {
+  lSetRate(n, parseFloat(document.getElementById('rate' + n).value) + a);
+}
+
 function update() {
   const cashM = getCashM();
   const cash = cashM * 1e6;
@@ -932,9 +986,10 @@ function update() {
   const r1 = parseFloat(document.getElementById('rate1').value);
   const r2 = parseFloat(document.getElementById('rate2').value);
   const r3 = parseFloat(document.getElementById('rate3').value);
-  document.getElementById('rate1Out').textContent = r1.toFixed(1) + '%';
-  document.getElementById('rate2Out').textContent = r2.toFixed(1) + '%';
-  document.getElementById('rate3Out').textContent = r3.toFixed(1) + '%';
+  const pct = v => (Math.round(v * 100) / 100) + '%';
+  document.getElementById('rate1Out').textContent = pct(r1);
+  document.getElementById('rate2Out').textContent = pct(r2);
+  document.getElementById('rate3Out').textContent = pct(r3);
 
   buildIncomeGrid(finalCash, r1, 'incomeGrid1', null);
   buildIncomeGrid(initial, r2, 'incomeGrid2', initial - finalCash > 0 ? initial - finalCash : null);
@@ -1011,7 +1066,7 @@ function bRender() {
     const g = grossYear / r.f, n = g * m, e = g - n;
     return '<tr><td data-label="Per">' + r.label + '</td><td class="num" data-label="Gross">' + bFmt(g) +
       '</td><td class="num" data-label="Expense" style="color:#e05252">' + bFmt(e) +
-      '</td><td class="num cum" data-label="Net" style="color:#00C853">' + bFmt(n) + '</td></tr>';
+      '</td><td class="num cum" data-label="Net" style="color:#157347">' + bFmt(n) + '</td></tr>';
   }).join('');
   document.getElementById('b-foot').textContent =
     'Hourly assumes ' + b.hoursPerDay + ' working hours/day. Week = year ÷ 52, day = year ÷ 365.';
