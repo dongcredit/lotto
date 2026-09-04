@@ -574,16 +574,16 @@ input[type=range] { width: 100%; accent-color: #1A4F8A; }
   <div class="section">
     <div class="section-title">Your numbers</div>
     <div class="input-row">
-      <label>Number of clients</label>
+      <label>Number of businesses</label>
       <div class="input-wrap">
-        <input type="number" id="b-clients" value="73000" step="1" min="0" class="no-prefix" oninput="bClientsInput()">
+        <input type="number" id="b-clients" value="250000" step="1" min="0" class="no-prefix" oninput="bClientsInput()">
       </div>
     </div>
     <div class="input-row">
-      <label>Avg paid per client / month</label>
+      <label>Avg paid per business / month</label>
       <div class="input-wrap">
         <span class="prefix">$</span>
-        <input type="number" id="b-monthly" value="375" step="100" min="0" oninput="bMonthlyInput()">
+        <input type="number" id="b-monthly" value="500" step="100" min="0" oninput="bMonthlyInput()">
       </div>
     </div>
     <div class="input-row">
@@ -1001,7 +1001,7 @@ function update() {
 
 /* ============ Business calculator ============ */
 const b = {
-  clients: 73000, monthly: 375, netPct: 65, hoursPerDay: 8,
+  clients: 250000, monthly: 500, netPct: 65, hoursPerDay: 8,
   revMult: 3, profMult: 5,
   rTarget: 1000000, rBasis: 'net', rPeriod: 'day'
 };
