@@ -835,18 +835,18 @@ function tRender() {
   // table
   let thead, body = '';
   if (t.viewUnit === 'year') {
-    thead = '<tr><th>Year</th><th>Calendar</th><th>Per ' + label + '</th><th class="num">That year\u2019s total</th><th class="num">Per month \u2248</th><th class="num">Per week \u2248</th><th class="num">Per day \u2248</th><th class="num">Cumulative</th></tr>';
+    thead = '<tr><th aria-label="Tenure year" title="Tenure year">Year</th><th>Calendar</th><th class="num" aria-label="Year amount" title="Year amount">Year</th><th class="num" aria-label="Monthly average" title="Monthly average">Month</th><th class="num" aria-label="Weekly average" title="Weekly average">Week</th><th class="num" aria-label="Daily average" title="Daily average">Day</th><th class="num" aria-label="Cumulative total" title="Cumulative total">Total</th></tr>';
     rows.forEach(r => {
       body += '<tr><td data-label="Year">' + r.label + '</td><td class="muted" data-label="Calendar">' + tCalYearLabel(r.label) +
-        '</td><td data-label="Per ' + label + '">' + tFmt(r.per) + '</td><td class="num" data-label="That year\u2019s total">' + tFmt(r.chunk) +
-        '</td><td class="num muted" data-label="Per month \u2248">' + tFmt(r.chunk / 12) + '</td><td class="num muted" data-label="Per week \u2248">' + tFmt(r.chunk / 52) +
-        '</td><td class="num muted" data-label="Per day \u2248">' + tFmt(r.chunk / 365) + '</td><td class="cum" data-label="Cumulative">' + tFmt(r.cum) + '</td></tr>';
+        '</td><td class="num" data-label="Year">' + tFmt(r.chunk) +
+        '</td><td class="num muted" data-label="Month">' + tFmt(r.chunk / 12) + '</td><td class="num muted" data-label="Week">' + tFmt(r.chunk / 52) +
+        '</td><td class="num muted" data-label="Day">' + tFmt(r.chunk / 365) + '</td><td class="cum" data-label="Total">' + tFmt(r.cum) + '</td></tr>';
     });
   } else {
-    thead = '<tr><th>Month</th><th>Calendar</th><th>Yr</th><th>Per ' + label + '</th><th class="num">This month</th><th class="num">That year</th><th class="num">Cumulative</th></tr>';
+    thead = '<tr><th aria-label="Tenure month" title="Tenure month">Month</th><th>Calendar</th><th aria-label="Tenure year" title="Tenure year">Yr</th><th class="num" aria-label="Month amount" title="Month amount">Month</th><th class="num" aria-label="Year amount" title="Year amount">Year</th><th class="num" aria-label="Cumulative total" title="Cumulative total">Total</th></tr>';
     rows.forEach(r => {
-      body += '<tr><td data-label="Month">' + r.label + '</td><td class="muted" data-label="Calendar">' + tCalMonthLabel(r.label) + '</td><td class="muted" data-label="Yr">' + r.ty + '</td><td data-label="Per ' + label + '">' + tFmt(r.per) +
-        '</td><td class="num" data-label="This month">' + tFmt(r.chunk) + '</td><td class="num" data-label="That year">' + tFmt(r.yt) + '</td><td class="cum" data-label="Cumulative">' + tFmt(r.cum) + '</td></tr>';
+      body += '<tr><td data-label="Month">' + r.label + '</td><td class="muted" data-label="Calendar">' + tCalMonthLabel(r.label) + '</td><td class="muted" data-label="Yr">' + r.ty +
+        '</td><td class="num" data-label="Month">' + tFmt(r.chunk) + '</td><td class="num" data-label="Year">' + tFmt(r.yt) + '</td><td class="cum" data-label="Total">' + tFmt(r.cum) + '</td></tr>';
     });
   }
   document.getElementById('t-thead').innerHTML = thead;
